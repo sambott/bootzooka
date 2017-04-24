@@ -52,20 +52,20 @@ Of course, the existing endpoints (for managing users, getting the version) have
 
 ## Swagger
 
-Bootzooka uses [swagger-akka-http:0.9.1](https://github.com/swagger-akka-http/swagger-akka-http) for compilation of `swagger.json` or `swagger.yaml` files on runtime. Swagger files are exposed to [http://localhost:8080/api-docs/swagger.yaml](http://localhost:8080/api-docs/swagger.yaml) or [http://localhost:8080/api-docs/swagger.json](http://localhost:8080/api-docs/swagger.json).
+Bootzooka uses [swagger-akka-http](https://github.com/swagger-akka-http/swagger-akka-http) for generating `swagger.json` and `swagger.yaml`. Swagger files are exposed to [/api-docs/swagger.yaml](http://localhost:8080/api-docs/swagger.yaml) and [/api-docs/swagger.json](http://localhost:8080/api-docs/swagger.json).
 
-Routes are not added and described to Swagger files automatically, they has to be annotated first.
-
-In order to describe a particular web method from backend API in Swagger you need to do next:
+Routes are not added to Swagger files automatically, they have to be annotated first. In order to describe a particular endpoint you need to:
  
- 1. extract route as def method to trait with annotations. Look at `VersionRoutes` and `VersionRoutesAnnotations` as example:
+ 1. extract route as a method to a trait with annotations. Look at `VersionRoutes` and `VersionRoutesAnnotations` as example:
+ 
  ```
  trait VersionRoutesAnnotations {
    def getVersion: StandardRoute
  }
  ```
  
- 2. annotate routes and used entities. See documentation in [swagger-akka-http:0.9.1](https://github.com/swagger-akka-http/swagger-akka-http) for compilation of `swagger.json` or `swagger.yaml` files. Swagger files are exposed to [http://localhost:8080/api-docs/swagger.yaml](http://localhost:8080/api-docs/swagger.yaml) or [http://localhost:8080/api-docs/swagger.json](http://localhost:8080/api-docs/swagger.json):
+ 2. annotate routes and used entities. See documentation in [swagger-akka-http](https://github.com/swagger-akka-http/swagger-akka-http):
+ 
  ```
  @Api(value = "Version", description = "Operations about media build version",
    produces = "application/json", consumes = "application/json")
@@ -99,7 +99,7 @@ class SwaggerDocService(address: String, port: Int, system: ActorSystem) extends
 }
 ```
 
-4. run project. Check swagger at [http://localhost:8080/api-docs/swagger.yaml](http://localhost:8080/api-docs/swagger.yaml) or [http://localhost:8080/api-docs/swagger.json](http://localhost:8080/api-docs/swagger.json).
+4. run project. Check swagger output at [/api-docs/swagger.yaml](http://localhost:8080/api-docs/swagger.yaml) or [/api-docs/swagger.json](http://localhost:8080/api-docs/swagger.json).
 
 If the project is running locally, you might use [editor.swagger.io](http://editor.swagger.io/#!/) for testing purposes.
  
