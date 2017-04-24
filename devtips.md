@@ -54,52 +54,7 @@ Of course, the existing endpoints (for managing users, getting the version) have
 
 Bootzooka uses [swagger-akka-http](https://github.com/swagger-akka-http/swagger-akka-http) for generating `swagger.json` and `swagger.yaml`. Swagger files are exposed to [/api-docs/swagger.yaml](http://localhost:8080/api-docs/swagger.yaml) and [/api-docs/swagger.json](http://localhost:8080/api-docs/swagger.json).
 
-Routes are not added to Swagger files automatically, they have to be annotated first. In order to describe a particular endpoint you need to:
- 
- 1. extract route as a method to a trait with annotations. Look at `VersionRoutes` and `VersionRoutesAnnotations` as example:
- 
- ```
- trait VersionRoutesAnnotations {
-   def getVersion: StandardRoute
- }
- ```
- 
- 2. annotate routes and used entities. See documentation in [swagger-akka-http](https://github.com/swagger-akka-http/swagger-akka-http):
- 
- ```
- @Api(value = "Version", description = "Operations about media build version",
-   produces = "application/json", consumes = "application/json")
- @Path("/api/version")
- trait VersionRoutesAnnotations {
- 
-   @ApiOperation(httpMethod = "GET", response = classOf[VersionJson], value = "Returns an object which describes running version")
-   @ApiResponses(Array(
-     new ApiResponse(code = 500, message = "Internal Server Error"),
-     new ApiResponse(code = 200, message = "OK", response = classOf[VersionJson])
-   ))
-   @Path("/")
-   def getVersion: StandardRoute
- }
- 
- @ApiModel(description = "Short description of the version of an object")
- case class VersionJson(
-   @(ApiModelProperty @field)(value = "Build number") build: String,
-   @(ApiModelProperty @field)(value = "The timestamp of the build") date: String
- )
-```
-
-3. add annotated route to val apiTypes in SwaggerDocApi class:
-```
-class SwaggerDocService(address: String, port: Int, system: ActorSystem) extends SwaggerHttpService with HasActorSystem {
- ...
-  override val apiTypes = Seq( // add here routes in order to add to swagger
-    ua.typeOf[VersionRoutes]
-  )
-  ...
-}
-```
-
-4. run project. Check swagger output at [/api-docs/swagger.yaml](http://localhost:8080/api-docs/swagger.yaml) or [/api-docs/swagger.json](http://localhost:8080/api-docs/swagger.json).
+Routes are not added to Swagger files automatically, they have to be annotated first. See [`VersionRoutes` and `VersionRoutesAnnotations`](https://github.com/softwaremill/bootzooka/blob/master/backend/src/main/scala/com/softwaremill/bootzooka/version/VersionRoutes.scala) for an example.
 
 If the project is running locally, you might use [editor.swagger.io](http://editor.swagger.io/#!/) for testing purposes.
  
