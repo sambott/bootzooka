@@ -51,6 +51,15 @@ val akkaHttpSession      = "com.softwaremill.akka-http-session" %% "core" % "0.4
 val akkaStack            = Seq(akkaHttpCore, akkaHttpExperimental, akkaHttpTestkit, akkaHttpSession)
 val swagger              = "com.github.swagger-akka-http" %% "swagger-akka-http" % "0.9.1"
 
+val kamonVersion = "0.6.6"
+lazy val monitoringDependencies = Seq(
+  "io.kamon" %% "kamon-core" % kamonVersion,
+  "io.kamon" %% "kamon-jmx" % kamonVersion,
+  "io.kamon" %% "kamon-akka-2.4" % kamonVersion,
+//  "io.kamon" %% "kamon-akka-remote_akka-2.4" % "0.6.4",
+  "io.kamon" %% "kamon-akka-http" % kamonVersion
+)
+
 val commonDependencies = unitTestingStack ++ loggingStack
 
 lazy val updateNpm = taskKey[Unit]("Update npm")
@@ -99,7 +108,10 @@ lazy val backend: Project = (project in file("backend"))
   .settings(commonSettings)
   .settings(Revolver.settings)
   .settings(
-    libraryDependencies ++= slickStack ++ akkaStack ++ circe ++ Seq(javaxMailSun, typesafeConfig, swagger),
+    resolvers += Resolver.bintrayRepo("kamon-io", "releases"),
+//    javaOptions in reStart += "-Xmx2g",
+    javaOptions in reStart += "-javaagent:/home/andrzej/.aspectj/aspectjweaver-1.8.10.jar",
+    libraryDependencies ++= slickStack ++ akkaStack ++ circe ++ Seq(javaxMailSun, typesafeConfig, swagger) ++ monitoringDependencies,
     buildInfoPackage := "com.softwaremill.bootzooka.version",
     buildInfoObject := "BuildInfo",
     buildInfoKeys := Seq[BuildInfoKey](

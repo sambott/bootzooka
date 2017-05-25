@@ -9,6 +9,7 @@ import akka.stream.ActorMaterializer
 import com.softwaremill.bootzooka.user.application.Session
 import com.softwaremill.session.{SessionConfig, SessionManager}
 import com.typesafe.scalalogging.StrictLogging
+import kamon.Kamon
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
@@ -40,6 +41,7 @@ class Main() extends StrictLogging {
 }
 
 object Main extends App with StrictLogging {
+  Kamon.start()
   val (startFuture, bl) = new Main().start()
 
   val host = bl.config.serverHost
@@ -54,12 +56,14 @@ object Main extends App with StrictLogging {
       sys.addShutdownHook {
         b.unbind()
         bl.system.terminate()
+        Kamon.shutdown()
         logger.info("Server stopped")
       }
     case Failure(e) =>
       logger.error(s"Cannot start server on $host:$port", e)
       sys.addShutdownHook {
         bl.system.terminate()
+        Kamon.shutdown()
         logger.info("Server stopped")
       }
   }
