@@ -106,11 +106,7 @@ lazy val rootProject = (project in file("."))
 lazy val backend: Project = (project in file("backend"))
   .enablePlugins(BuildInfoPlugin)
   .settings(commonSettings)
-  .settings(Revolver.settings)
   .settings(
-    resolvers += Resolver.bintrayRepo("kamon-io", "releases"),
-//    javaOptions in reStart += "-Xmx2g",
-    javaOptions in reStart += "-javaagent:/home/andrzej/.aspectj/aspectjweaver-1.8.10.jar",
     libraryDependencies ++= slickStack ++ akkaStack ++ circe ++ Seq(javaxMailSun, typesafeConfig, swagger) ++ monitoringDependencies,
     buildInfoPackage := "com.softwaremill.bootzooka.version",
     buildInfoObject := "BuildInfo",
