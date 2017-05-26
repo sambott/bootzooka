@@ -136,4 +136,15 @@ lazy val uiTests = (project in file("ui-tests"))
     test in Test := (test in Test).dependsOn(npmTask.toTask(" run build")).value
   ) dependsOn backend
 
+lazy val perfTest = (project in file("perf-test"))
+  .enablePlugins(GatlingPlugin)
+  .settings(
+    scalaVersion := "2.11.8",
+    libraryDependencies ++= Seq(
+      "org.scalatest"                   %% "scalatest"                  % "3.0.0"          % "test,it",
+      "io.gatling.highcharts"           % "gatling-charts-highcharts"   % "2.2.3"          % "test,it",
+      "io.gatling"                      % "gatling-test-framework"      % "2.2.3"          % "test,it"
+    )
+  )
+
 RenameProject.settings

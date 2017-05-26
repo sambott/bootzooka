@@ -9,3 +9,5 @@ addSbtPlugin("com.heroku" % "sbt-heroku" % "1.0.0")
 addSbtPlugin("com.updateimpact" % "updateimpact-sbt-plugin" % "2.1.1")
 
 addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "0.6.8")
+
+addSbtPlugin("io.gatling" % "gatling-sbt" % "2.2.1")
