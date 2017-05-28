@@ -1,7 +1,8 @@
 package com.softwaremill.bootzooka.user.api
 
+import akka.http.javadsl.model.headers.CustomHeader
 import akka.http.scaladsl.model.StatusCodes
-import akka.http.scaladsl.model.headers.{`Set-Cookie`, Cookie}
+import akka.http.scaladsl.model.headers.{Authorization, Cookie, CustomHeader, OAuth2BearerToken, `Set-Cookie`}
 import akka.http.scaladsl.server.Route
 import com.softwaremill.bootzooka.test.{BaseRoutesSpec, TestHelpersWithDb}
 
@@ -62,9 +63,9 @@ class UsersRoutesSpec extends BaseRoutesSpec with TestHelpersWithDb { spec =>
     Post("/users", Map("login" -> login, "password" -> password)) ~> routes ~> check {
       status should be(StatusCodes.OK)
 
-      val Some(sessionCookie) = header[`Set-Cookie`]
+      val Some(sessionHeader) = header("Set-Authorization")
 
-      body(addHeader(Cookie(sessionConfig.sessionCookieConfig.name, sessionCookie.cookie.value)))
+      body(addHeader("Authorization", sessionHeader.value()))
     }
 
   "POST /" should "log in given valid credentials" in {

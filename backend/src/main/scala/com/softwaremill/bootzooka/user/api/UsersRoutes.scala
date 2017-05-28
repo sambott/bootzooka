@@ -24,7 +24,7 @@ trait UsersRoutes extends RoutesSupport with StrictLogging with SessionSupport {
     path("logout") {
       get {
         userIdFromSession { _ =>
-          invalidateSession(refreshable, usingCookies) {
+          invalidateSession(refreshable, usingHeaders) {
             completeOk
           }
         }
@@ -61,9 +61,9 @@ trait UsersRoutes extends RoutesSupport with StrictLogging with SessionSupport {
               case Some(user) =>
                 val session = Session(user.id)
                 (if (in.rememberMe.getOrElse(false)) {
-                   setSession(refreshable, usingCookies, session)
+                   setSession(refreshable, usingHeaders, session)
                  } else {
-                   setSession(oneOff, usingCookies, session)
+                   setSession(oneOff, usingHeaders, session)
                  }) {
                   complete(user)
                 }
