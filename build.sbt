@@ -56,6 +56,8 @@ val commonDependencies = unitTestingStack ++ loggingStack
 lazy val updateNpm = taskKey[Unit]("Update npm")
 lazy val npmTask   = inputKey[Unit]("Run npm with arguments")
 
+val localNpmCommand = if (System.getProperty("os.name").startsWith("Windows")) "cmd /c npm " else "npm "
+
 lazy val commonSettings = Seq(
   organization := "com.softwaremill",
   version := "0.0.1-SNAPSHOT",
@@ -66,14 +68,13 @@ lazy val commonSettings = Seq(
   libraryDependencies ++= commonDependencies,
   updateNpm := {
     println("Updating npm dependencies")
-    haltOnCmdResultError(Process("npm install", baseDirectory.value / ".." / "ui") !)
+    haltOnCmdResultError(Process(localNpmCommand + "install", baseDirectory.value / ".." / "ui") !)
   },
   npmTask := {
     val taskName = spaceDelimited("<arg>").parsed.mkString(" ")
     updateNpm.value
-    val localNpmCommand = "npm " + taskName
-    def buildWebpack() =
-      Process(localNpmCommand, baseDirectory.value / ".." / "ui").!
+    val npmTaskCommand = localNpmCommand + taskName
+    def buildWebpack() = Process(npmTaskCommand, baseDirectory.value / ".." / "ui").!
     println("Building with Webpack : " + taskName)
     haltOnCmdResultError(buildWebpack())
   }
